@@ -19,19 +19,29 @@
           class="key"
           :class="{
             [`key--${rowItem.display || rowItem.key}`]: true,
-            'key__clicked': isKeyActive({item: rowItem})
+            'key__clicked': isKeyActive({ item: rowItem })
           }"
         >
           <span
-            v-if="rowItem.superset"
+            v-if="rowItem.sub"
             class="key__muted"
           >
-            {{ rowItem.superset }}
+            {{ rowItem.sub.display }}
           </span>
 
-          <span>{{ rowItem.display || rowItem.key }}</span>
+          <span>{{ rowItem.display }}</span>
         </div>
       </div>
+    </div>
+
+    <div class="footer">
+      <p>
+        Made with ❤ by <a
+          class="footer__author"
+          href="https://jeash.tech"
+          target="_blank"
+        >Ernie Jeash</a>
+      </p>
     </div>
   </div>
 </template>
@@ -44,7 +54,7 @@ export default {
 
   data () {
     return {
-      activeKeys: new Set(),
+      activeCodes: new Set(),
 
       text: ''
 
@@ -53,78 +63,80 @@ export default {
 
   computed: {
     keyboardRows () {
-      return [
+      const keyboard = [
         [
-          { key: '`', superset: '~' },
-          { key: '1', superset: '!' },
-          { key: '2', superset: '@' },
-          { key: '3', superset: '#' },
-          { key: '4', superset: '$' },
-          { key: '5', superset: '%' },
-          { key: '6', superset: '^' },
-          { key: '7', superset: '&' },
-          { key: '8', superset: '*' },
-          { key: '9', superset: '(' },
-          { key: '0', superset: ')' },
-          { key: '-', superset: '_' },
-          { key: '=', superset: '+' },
-          { key: 'backspace' }
+          { display: '`', sub: '~', code: 'Backquote' },
+          { display: '1', sub: '!', code: 'Digit1' },
+          { display: '2', sub: '@', code: 'Digit2' },
+          { display: '3', sub: '#', code: 'Digit3' },
+          { display: '4', sub: '$', code: 'Digit4' },
+          { display: '5', sub: '%', code: 'Digit5' },
+          { display: '6', sub: '^', code: 'Digit6' },
+          { display: '7', sub: '&', code: 'Digit7' },
+          { display: '8', sub: '*', code: 'Digit8' },
+          { display: '9', sub: '(', code: 'Digit9' },
+          { display: '0', sub: ')', code: 'Digit0' },
+          { display: '-', sub: '_', code: 'Minus' },
+          { display: '=', sub: '+', code: 'Equal' },
+          { display: 'backspace', code: 'Backspace' }
         ],
         [
-          { key: 'tab' },
-          { key: 'Q' },
-          { key: 'W' },
-          { key: 'E' },
-          { key: 'R' },
-          { key: 'T' },
-          { key: 'Y' },
-          { key: 'U' },
-          { key: 'I' },
-          { key: 'O' },
-          { key: 'P' },
-          { key: '[', superset: '{' },
-          { key: ']', superset: '}' },
-          { key: '\\', superset: '|' }
+          { display: 'tab', code: 'Tab' },
+          { display: 'Q', code: 'KeyQ' },
+          { display: 'W', code: 'KeyW' },
+          { display: 'E', code: 'KeyE' },
+          { display: 'R', code: 'KeyR' },
+          { display: 'T', code: 'KeyT' },
+          { display: 'Y', code: 'KeyY' },
+          { display: 'U', code: 'KeyU' },
+          { display: 'I', code: 'KeyI' },
+          { display: 'O', code: 'KeyO' },
+          { display: 'P', code: 'KeyP' },
+          { display: '[', sub: '{', code: 'BracketLeft' },
+          { display: ']', sub: '}', code: 'BracketRight' },
+          { display: '\\', sub: '|', code: 'Backslash' }
         ],
         [
-          { key: 'caps' },
-          { key: 'A' },
-          { key: 'S' },
-          { key: 'D' },
-          { key: 'F' },
-          { key: 'G' },
-          { key: 'H' },
-          { key: 'J' },
-          { key: 'K' },
-          { key: 'L' },
-          { key: ';', superset: ':' },
-          { key: "'", superset: '"' },
-          { key: 'enter' }
+          { display: 'caps', code: 'CapsLock' },
+          { display: 'A', code: 'KeyA' },
+          { display: 'S', code: 'KeyS' },
+          { display: 'D', code: 'KeyD' },
+          { display: 'F', code: 'KeyF' },
+          { display: 'G', code: 'KeyG' },
+          { display: 'H', code: 'KeyH' },
+          { display: 'J', code: 'KeyJ' },
+          { display: 'K', code: 'KeyK' },
+          { display: 'L', code: 'KeyL' },
+          { display: ';', sub: ':', code: 'SemiColon' },
+          { display: "'", sub: '"', code: 'Quote' },
+          { display: 'enter' }
         ],
         [
-          { key: 'shift' },
-          { key: 'Z' },
-          { key: 'X' },
-          { key: 'C' },
-          { key: 'V' },
-          { key: 'B' },
-          { key: 'N' },
-          { key: 'M' },
-          { key: ',', superset: '<' },
-          { key: '.', superset: '>' },
-          { key: '/', superset: '?' },
-          { key: 'shift' }
+          { display: 'shift', code: 'ShiftLeft' },
+          { display: 'Z', code: 'KeyZ' },
+          { display: 'X', code: 'KeyX' },
+          { display: 'C', code: 'KeyC' },
+          { display: 'V', code: 'KeyV' },
+          { display: 'B', code: 'KeyB' },
+          { display: 'N', code: 'KeyN' },
+          { display: 'M', code: 'KeyM' },
+          { display: ',', sub: '<', code: 'Comma' },
+          { display: '.', sub: '>', code: 'Period' },
+          { display: '/', sub: '?', code: 'Slash' },
+          { display: 'shift' }
         ],
         [
-          { display: 'ctrl', key: 'control' },
-          { display: '⊞', key: 'meta' },
-          { key: 'alt' },
-          { display: 'space', key: ' ' },
-          { key: 'alt' },
-          { display: '⊞', key: 'meta' },
-          { display: 'ctrl', key: 'control' }
+          { display: 'control', code: 'ControlLeft' },
+          { display: '⊞', code: 'MetaLeft' },
+          { display: 'alt', code: 'AltLeft' },
+          { display: 'space', code: 'Space' },
+          { display: 'alt', code: 'AltRight' },
+          { display: '⊞', code: 'MetaRight' },
+          { display: 'control', code: 'ControlRight' }
         ]
       ]
+
+      return keyboard
     }
   },
 
@@ -136,19 +148,36 @@ export default {
     bootstrapEvents () {
       // Keydown
       const keydownHandler = e => {
-        this.activeKeys.add(e.key.toLowerCase())
+        this.activeCodes.add(e.code)
+
+        const prevents = new Set([
+          'AltLeft',
+          'AltRight',
+          'MetaLeft',
+          'MetaRight',
+          'Tab'
+        ])
+
+        if (prevents.has(e.code)) {
+          e.preventDefault()
+        }
+
+        if (e.altKey) {
+          e.preventDefault()
+        }
       }
 
       const keyupHandler = e => {
-        this.activeKeys.delete(e.key.toLowerCase())
+        this.activeCodes.delete(e.code)
       }
 
       const clickHandler = e => {
         document.querySelector('.monitor').focus()
+        this.activeCodes.clear()
       }
 
       const blurHandler = e => {
-        this.activeKeys.clear()
+        this.activeCodes.clear()
       }
 
       const events = [
@@ -161,114 +190,23 @@ export default {
 
       events.forEach(e => {
         document.addEventListener(e.event, e.handler)
+        window.addEventListener(e.event, e.handler)
       })
     },
 
     isKeyActive ({ item }) {
-      const activeKeys = this.activeKeys
-      const key = item.key.toLowerCase()
+      const activeCodes = this.activeCodes
 
-      if (activeKeys.has(key)) {
-        return true
+      if (!activeCodes.size) {
+        return false
       }
 
-      if (item.superset) {
-        const superset = item.superset.toLowerCase()
-
-        return activeKeys.has(superset)
-      }
+      return activeCodes.has(item.code)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.home {
-  height: 100%;
-  width: 100%;
-}
-
-.monitor {
-  height: 300px;
-  width: 100%;
-  border: 1px solid $warmGray-500;
-  margin-bottom: 20px;
-  overflow-y: auto;
-  padding: 10px;
-  font-size: 0.9rem;
-  color: $warmGray-400;
-  background: transparent;
-  resize: none;
-  border-radius: 5px;
-  user-select: none;
-
-  &:focus {
-    outline: none;
-  }
-}
-
-.keyboard {
-  .keyboard__row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .key {
-    height: 45px;
-    min-width: 45px;
-    font-family: monospace;
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border: 1px solid $warmGray-500;
-    color: $warmGray-500;
-    border-radius: 5px;
-    flex-direction: column;
-    padding: 5px;
-    user-select: none;
-    margin: 3px;
-    line-height: 100%;
-    text-transform: uppercase;
-
-    .key__muted {
-      color: $warmGray-600;
-      text-align: left;
-      margin: 0;
-      padding: 0;
-      line-height: 100%;
-      font-size: 0.8rem;
-      width: 100%;
-      flex-grow: 1;
-      flex:0 0 auto;
-    }
-
-    &.key__clicked {
-      border: 1px solid $amber-400;
-      color: white;
-      background-color: $amber-400;
-    }
-
-    &.key--tab {
-      width: 70px;
-    }
-
-    &.key--caps {
-      width: 70px;
-    }
-
-    &.key--shift {
-      width: 90px;
-    }
-
-    &.key--enter {
-      width: 100px;
-    }
-
-    &.key--space {
-      width: 300px;
-    }
-  }
-}
+@import './styles/home';
 </style>
