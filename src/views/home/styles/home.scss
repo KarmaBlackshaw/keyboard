@@ -11,6 +11,8 @@
   justify-content: center;
 
   .monitor__body {
+    user-select: none;
+    caret-color: transparent;
     width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -28,84 +30,6 @@
 
     &:focus {
       outline: none;
-    }
-  }
-}
-
-.keyboard {
-  margin-bottom: 20px;
-
-  .keyboard__row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .key {
-    height: 45px;
-    min-width: 45px;
-    font-family: monospace;
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border: 1px solid $warmGray-500;
-    color: $warmGray-500;
-    border-radius: 5px;
-    flex-direction: column;
-    padding: 5px;
-    user-select: none;
-    margin: 3px;
-    line-height: 100%;
-    text-transform: uppercase;
-
-    @include smAndBelow {
-      height: 35px;
-      min-width: 25px;
-      margin: 1px;
-    }
-
-    .key__muted {
-      color: $warmGray-600;
-      text-align: left;
-      margin: 0;
-      padding: 0;
-      line-height: 100%;
-      font-size: 0.8rem;
-      width: 100%;
-      flex-grow: 1;
-      flex: 0 0 auto;
-      margin-bottom: 2px;
-
-      @include smAndBelow {
-        font-size: 0.6rem;
-      }
-    }
-
-    &.key__clicked {
-      border: 1px solid $amber-400;
-      color: white;
-      background-color: $amber-400;
-    }
-
-    &.key--tab {
-      width: 70px;
-    }
-
-    &.key--caps {
-      width: 70px;
-    }
-
-    &.key--shift {
-      width: 90px;
-    }
-
-    &.key--enter {
-      width: 100px;
-    }
-
-    &.key--space {
-      width: 300px;
     }
   }
 }

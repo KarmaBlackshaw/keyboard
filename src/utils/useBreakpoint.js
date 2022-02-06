@@ -61,6 +61,7 @@ export default () => {
   onMounted(() => {
     state.width = window.innerWidth
     window.onresize = () => {
+      console.log(breakpoint.value.smAndBelow)
       state.width = window.innerWidth
     }
   })
