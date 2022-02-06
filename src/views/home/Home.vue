@@ -1,7 +1,13 @@
 <template>
   <div class="home">
+    <textarea
+      v-model="text"
+      class="monitor"
+      autofocus
+    >
+    </textarea>
+
     <div class="keyboard">
-      {{ activeKeys }}
       <div
         v-for="(row, rowKey) in keyboardRows"
         :key="rowKey"
@@ -38,7 +44,10 @@ export default {
 
   data () {
     return {
-      activeKeys: new Set()
+      activeKeys: new Set(),
+
+      text: ''
+
     }
   },
 
@@ -47,16 +56,16 @@ export default {
       return [
         [
           { key: '`', superset: '~' },
-          { key: '1' },
-          { key: '2' },
-          { key: '3' },
-          { key: '4' },
-          { key: '5' },
-          { key: '6' },
-          { key: '7' },
-          { key: '8' },
-          { key: '9' },
-          { key: '0' },
+          { key: '1', superset: '!' },
+          { key: '2', superset: '@' },
+          { key: '3', superset: '#' },
+          { key: '4', superset: '$' },
+          { key: '5', superset: '%' },
+          { key: '6', superset: '^' },
+          { key: '7', superset: '&' },
+          { key: '8', superset: '*' },
+          { key: '9', superset: '(' },
+          { key: '0', superset: ')' },
           { key: '-', superset: '_' },
           { key: '=', superset: '+' },
           { key: 'backspace' }
@@ -120,22 +129,41 @@ export default {
   },
 
   mounted () {
-    document.addEventListener('keydown', e => {
-      this.activeKeys.add(e.key.toLowerCase())
-      e.preventDefault()
-    })
-
-    document.addEventListener('keyup', e => {
-      this.activeKeys.delete(e.key.toLowerCase())
-      e.preventDefault()
-    })
-
-    window.addEventListener('blur', () => {
-      this.activeKeys.clear()
-    })
+    this.bootstrapEvents()
   },
 
   methods: {
+    bootstrapEvents () {
+      // Keydown
+      const keydownHandler = e => {
+        this.activeKeys.add(e.key.toLowerCase())
+      }
+
+      const keyupHandler = e => {
+        this.activeKeys.delete(e.key.toLowerCase())
+      }
+
+      const clickHandler = e => {
+        document.querySelector('.monitor').focus()
+      }
+
+      const blurHandler = e => {
+        this.activeKeys.clear()
+      }
+
+      const events = [
+        { type: document, event: 'keydown', handler: keydownHandler },
+        { type: document, event: 'keypress', handler: keydownHandler },
+        { type: document, event: 'keyup', handler: keyupHandler },
+        { type: document, event: 'click', handler: clickHandler },
+        { type: window, event: 'blur', handler: blurHandler }
+      ]
+
+      events.forEach(e => {
+        document.addEventListener(e.event, e.handler)
+      })
+    },
+
     isKeyActive ({ item }) {
       const activeKeys = this.activeKeys
       const key = item.key.toLowerCase()
@@ -158,8 +186,25 @@ export default {
 .home {
   height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: center;
+}
+
+.monitor {
+  height: 300px;
+  width: 100%;
+  border: 1px solid $warmGray-500;
+  margin-bottom: 20px;
+  overflow-y: auto;
+  padding: 10px;
+  font-size: 0.9rem;
+  color: $warmGray-400;
+  background: transparent;
+  resize: none;
+  border-radius: 5px;
+  user-select: none;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .keyboard {
@@ -173,7 +218,7 @@ export default {
     height: 45px;
     min-width: 45px;
     font-family: monospace;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -185,6 +230,7 @@ export default {
     user-select: none;
     margin: 3px;
     line-height: 100%;
+    text-transform: uppercase;
 
     .key__muted {
       color: $warmGray-600;
