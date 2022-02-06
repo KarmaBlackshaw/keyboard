@@ -25,6 +25,7 @@
     line-height: 100%;
     text-transform: uppercase;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 
     @include smAndBelow {
       height: 35px;

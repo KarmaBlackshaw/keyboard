@@ -1,5 +1,6 @@
 <template>
   <div class="keyboard">
+    {{ activeCodes }}
     <div
       v-for="(row, rowKey) in keyboardRows"
       :key="rowKey"
@@ -13,10 +14,7 @@
           [`key--${rowItem.code}`]: true,
           'key__clicked': isKeyActive({ item: rowItem })
         }"
-        @click="keyboardEvents.keydownHandler"
-        @keydown="keyboardEvents.keydownHandler"
-        @keypress="keyboardEvents.keydownHandler"
-        @keyup="keyboardEvents.keyupHandler"
+        @click="keyboardEvents.clickHandler({ item: rowItem })"
       >
         <span
           v-if="rowItem.sub"
@@ -32,8 +30,10 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, reactive } from 'vue'
 import useBreakpoint from '@/utils/useBreakpoint'
+
+const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
 export default {
   name: 'HomeKeyboard',
@@ -41,7 +41,11 @@ export default {
   setup () {
     const { breakpoint } = useBreakpoint()
 
-    const text = ref('')
+    const state = reactive({
+      text: '',
+      isShift: false,
+      isCapsLock: false
+    })
 
     const keyboardRows = computed(() => {
       const keyboard = [
@@ -381,6 +385,7 @@ export default {
     })
 
     const activeCodes = ref(new Set())
+
     function isKeyActive ({ item }) {
       if (!activeCodes.value.size) {
         return false
@@ -390,6 +395,51 @@ export default {
     }
 
     const keyboardEvents = {
+      async clickHandler (e) {
+        activeCodes.value.add(e.item.code)
+
+        if (e.item.code === 'CapsLock') {
+          state.isCapsLock = true
+        }
+
+        if (e.item.code === 'ShiftLeft' || e.item.code === 'ShiftRight') {
+          state.isShift = true
+        }
+
+        const value = (() => {
+          if (state.isShift) {
+            if (e.item.sub) {
+              return e.item.sub.display
+            }
+
+            return e.item
+          }
+        })()
+
+        /**
+           * Reset shift because it can only be used once
+           * unlike capslock
+           */
+        if (state.isShift && (e.item.code === 'ShiftLeft' || e.item.code === 'ShiftRight')) {
+          state.isShift = false
+          activeCodes.value.delete('ShiftLeft')
+          activeCodes.value.delete('ShiftRight')
+        }
+
+        console.log(value)
+
+        await sleep(50)
+
+        const nonAutoRemoveCodes = new Set([
+          'ShiftLeft',
+          'ShiftRight'
+        ])
+
+        if (!nonAutoRemoveCodes.has(e.item.code)) {
+          activeCodes.value.delete(e.item.code)
+        }
+      },
+
       keydownHandler: e => {
         activeCodes.value.add(e.code)
 
@@ -407,10 +457,6 @@ export default {
           e.preventDefault()
         }
 
-        if (e.ctrlKey && e.which === 82) {
-          // e.preventDefault()
-        }
-
         if (e.altKey) {
           e.preventDefault()
         }
@@ -423,20 +469,12 @@ export default {
         ])
 
         if (!invalidCodes.has(e.code)) {
-          text.value += e.key
+          state.text += e.key
         }
       },
 
       keyupHandler: e => {
         activeCodes.value.delete(e.code)
-      },
-
-      clickHandler: e => {
-        const body = document.querySelector('.monitor__body')
-
-        if (body) {
-          body.focus()
-        }
       },
 
       blurHandler: e => {
@@ -462,7 +500,9 @@ export default {
 
     return {
       keyboardRows,
-      isKeyActive
+      isKeyActive,
+      keyboardEvents,
+      activeCodes
     }
   }
 }
