@@ -6,19 +6,29 @@
 .monitor {
   height: 300px;
   width: 100%;
-  border: 1px solid $warmGray-500;
   margin-bottom: 20px;
-  overflow-y: auto;
-  padding: 10px;
-  font-size: 0.9rem;
-  color: $warmGray-400;
-  background: transparent;
-  resize: none;
-  border-radius: 5px;
-  user-select: none;
+  display: flex;
+  justify-content: center;
 
-  &:focus {
-    outline: none;
+  .monitor__body {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid $warmGray-500;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 1.3rem;
+    color: $warmGray-400;
+    background: transparent;
+    resize: none;
+    border-radius: 5px;
+    user-select: none;
+    font-family: Montserrat;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+    }
   }
 }
 

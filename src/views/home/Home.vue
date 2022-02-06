@@ -1,11 +1,13 @@
 <template>
   <div class="home">
-    <textarea
-      v-model="text"
-      class="monitor"
-      autofocus
-    >
+    <div class="monitor">
+      <textarea
+        v-model="text"
+        class="monitor__body"
+        autofocus
+      >
     </textarea>
+    </div>
 
     <div class="keyboard">
       <div
@@ -26,7 +28,7 @@
             v-if="rowItem.sub"
             class="key__muted"
           >
-            {{ rowItem.sub.display }}
+            {{ rowItem.sub }}
           </span>
 
           <span>{{ rowItem.display }}</span>
@@ -36,11 +38,14 @@
 
     <div class="footer">
       <p>
-        Made with ❤ by <a
+        Made with ❤ by
+        <a
           class="footer__author"
           href="https://jeash.tech"
           target="_blank"
-        >Ernie Jeash</a>
+        >
+          Ernie Jeash
+        </a>
       </p>
     </div>
   </div>
@@ -48,6 +53,8 @@
 
 <script>
 // @ is an alias to /src
+
+import useBreakpoint from '@/utils/useBreakpoint'
 
 export default {
   name: 'Home',
@@ -109,7 +116,7 @@ export default {
           { display: 'L', code: 'KeyL' },
           { display: ';', sub: ':', code: 'SemiColon' },
           { display: "'", sub: '"', code: 'Quote' },
-          { display: 'enter' }
+          { display: 'enter', code: 'Enter' }
         ],
         [
           { display: 'shift', code: 'ShiftLeft' },
@@ -123,16 +130,16 @@ export default {
           { display: ',', sub: '<', code: 'Comma' },
           { display: '.', sub: '>', code: 'Period' },
           { display: '/', sub: '?', code: 'Slash' },
-          { display: 'shift' }
+          { display: 'shift', code: 'ShiftRight' }
         ],
         [
-          { display: 'control', code: 'ControlLeft' },
+          { display: 'ctrl', code: 'ControlLeft' },
           { display: '⊞', code: 'MetaLeft' },
           { display: 'alt', code: 'AltLeft' },
           { display: 'space', code: 'Space' },
           { display: 'alt', code: 'AltRight' },
           { display: '⊞', code: 'MetaRight' },
-          { display: 'control', code: 'ControlRight' }
+          { display: 'ctrl', code: 'ControlRight' }
         ]
       ]
 
@@ -172,7 +179,7 @@ export default {
       }
 
       const clickHandler = e => {
-        document.querySelector('.monitor').focus()
+        document.querySelector('.monitor__body').focus()
         this.activeCodes.clear()
       }
 
