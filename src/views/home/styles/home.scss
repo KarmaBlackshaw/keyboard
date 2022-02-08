@@ -10,6 +10,10 @@
   display: flex;
   justify-content: center;
 
+  @include smAndBelow {
+    height: 150px;
+  }
+
   .monitor__body {
     user-select: none;
     caret-color: transparent;
@@ -27,6 +31,11 @@
     user-select: none;
     font-family: Montserrat;
     text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+    @include smAndBelow {
+      font-size: 1.1rem;
+    }
 
     &:focus {
       outline: none;
